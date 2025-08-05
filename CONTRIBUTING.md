@@ -3,11 +3,13 @@
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - Git
 
 ### Setup
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -26,6 +28,7 @@ cp .env.example .env
 ## 🔧 Development
 
 ### Running Tests
+
 ```bash
 # Test the optimizer
 npm run test
@@ -35,12 +38,14 @@ npm run optimize:basic
 ```
 
 ### Code Style
+
 - Use Prettier for formatting
 - Follow existing naming conventions (kebab-case)
 - Add JSDoc comments for functions
 - Test your changes before committing
 
 ### Making Changes
+
 1. Create a feature branch: `git checkout -b feature/your-feature`
 2. Make your changes
 3. Test thoroughly
@@ -50,6 +55,7 @@ npm run optimize:basic
 ## 📋 Pull Request Guidelines
 
 ### PR Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Changes are tested and working
 - [ ] Documentation is updated if needed
@@ -57,6 +63,7 @@ npm run optimize:basic
 - [ ] No sensitive data (API keys, etc.) committed
 
 ### Commit Message Format
+
 ```
 🎯 [type]: Brief description
 
@@ -80,12 +87,14 @@ Examples:
 ## 🎯 Areas for Contribution
 
 ### High Priority
+
 - Additional CSS fix patterns
 - Performance optimizations
 - Error handling improvements
 - Documentation enhancements
 
 ### Ideas Welcome
+
 - New AI model integrations
 - Additional output formats
 - Batch processing features
