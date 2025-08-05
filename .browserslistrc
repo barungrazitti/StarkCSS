@@ -1,0 +1,21 @@
+# Browser support configuration for autoprefixer and other tools
+# This replaces the deprecated 'browsers' option
+
+# Modern browsers (covers 99%+ of users)
+> 1%
+last 2 versions
+not dead
+
+# Mobile browsers
+iOS >= 12
+Android >= 6
+
+# Desktop browsers
+Chrome >= 80
+Firefox >= 78
+Safari >= 13
+Edge >= 80
+
+# Specific browser features support
+supports css-grid
+supports flexbox

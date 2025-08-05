@@ -1,0 +1,60 @@
+{
+  "type": "module",
+  "name": "ultimate-ai-css-optimizer",
+  "version": "2.0.0",
+  "description": "Next-generation AI-powered CSS optimizer combining regex fixes with Groq's Llama 3.1 70B for complex structural issues",
+  "main": "css-optimizer.js",
+  "scripts": {
+    "optimize": "node css-optimizer.js",
+    "optimize:advanced": "node css-optimizer.js",
+    "optimize:minify": "node css-optimizer.js --minify",
+    "optimize:no-backup": "node css-optimizer.js --no-backup",
+    "optimize:basic": "node css-optimizer-basic.js",
+    "help": "node css-optimizer.js --help",
+    "test": "node css-optimizer.js && echo 'CSS optimization test completed successfully!'"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "cssnano": "^7.1.0",
+    "fs-extra": "^11.3.0",
+    "postcss": "^8.5.6",
+    "postcss-safe-parser": "^7.0.1",
+    "postcss-sort-media-queries": "^5.2.0",
+    "prettier": "^3.6.2",
+    "stylelint": "^16.23.0",
+    "stylelint-config-standard": "^39.0.0",
+    "stylelint-prettier": "^5.0.3"
+  },
+  "keywords": [
+    "css",
+    "optimizer",
+    "ai",
+    "groq",
+    "llama",
+    "linter",
+    "formatter",
+    "autoprefixer",
+    "minifier",
+    "artificial-intelligence",
+    "machine-learning",
+    "postcss",
+    "stylelint",
+    "prettier"
+  ],
+  "author": "AI CSS Optimizer Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/ultimate-ai-css-optimizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/ultimate-ai-css-optimizer/issues"
+  },
+  "homepage": "https://github.com/your-username/ultimate-ai-css-optimizer#readme"
+}
