@@ -46,7 +46,7 @@ try {
     // Process with PostCSS
     console.log('🔄 Processing with PostCSS...');
     const plugins = [
-        sortMediaQueries({ sort: 'mobile-first' }),
+        sortMediaQueries({ sort: 'desktop-first' }),
         autoprefixer({
             overrideBrowserslist: ['> 1%', 'last 2 versions', 'not dead'],
             grid: 'autoplace'

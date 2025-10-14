@@ -9,11 +9,12 @@ import cssnano from "cssnano";
 import prettier from "prettier";
 import stylelint from "stylelint";
 import { performance } from "perf_hooks";
+import crypto from "crypto";
 import dotenv from "dotenv";
 import { combineDuplicateMediaQueries } from "./media-query-combiner.js";
 
-// Load environment variables from .env file
-dotenv.config();
+// Load environment variables from .env file, overriding existing env vars
+dotenv.config({ override: true });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +49,7 @@ const CONFIG = {
   WARN_SIZE_MB: parseInt(process.env.WARN_SIZE_MB || "5"),
 
   // Groq AI Configuration
-  GROQ_API_KEY: process.env.GROQ_API_KEY || "",
+  GROQ_API_KEY: (process.env.GROQ_API_KEY || "").trim(),
   GROQ_API_URL:
     process.env.GROQ_API_URL ||
     "https://api.groq.com/openai/v1/chat/completions",
@@ -79,7 +80,134 @@ const CONFIG = {
   LOG_LEVEL: process.env.LOG_LEVEL || "info",
   ENABLE_VERBOSE_LOGGING: process.env.ENABLE_VERBOSE_LOGGING === "true",
   ENABLE_PERFORMANCE_TIMING: process.env.ENABLE_PERFORMANCE_TIMING !== "false",
+
+  // Caching
+  ENABLE_CACHE: process.env.ENABLE_CACHE !== "false",
 };
+
+/**
+ * Analyze CSS and provide detailed insights
+ */
+function analyzeCss(cssCode) {
+  const lines = cssCode.split("\n");
+  const rules = [];
+  const selectors = [];
+  const properties = [];
+  const mediaQueries = [];
+  
+  // Extract CSS rules, selectors, and properties
+  let currentSelector = "";
+  let inMediaQuery = false;
+  let currentMediaQuery = "";
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Check for media queries
+    if (line.startsWith("@media") || line.startsWith("@supports") || line.startsWith("@container")) {
+      inMediaQuery = true;
+      currentMediaQuery = line.replace(/\s*\{.*$/, "").trim();
+      mediaQueries.push(currentMediaQuery);
+    } else if (line.includes("{") && !line.startsWith("@")) {
+      // Selector line
+      currentSelector = line.replace(/\s*\{.*$/, "").trim();
+      selectors.push(currentSelector);
+      rules.push({ selector: currentSelector, mediaQuery: inMediaQuery ? currentMediaQuery : null });
+    } else if (line.includes(":") && line.includes(";")) {
+      // Property line
+      const prop = line.split(":")[0].trim();
+      properties.push(prop);
+    } else if (line === "}" && currentSelector) {
+      // End of rule
+      if (inMediaQuery && line.includes("}")) {
+        inMediaQuery = !line.includes("{"); // Close nested blocks
+      }
+      currentSelector = "";
+    }
+  }
+
+  // Additional analysis
+  const sizeInBytes = Buffer.byteLength(cssCode, "utf8");
+  const importStatements = (cssCode.match(/@import/g) || []).length;
+  const fontFaceDeclarations = (cssCode.match(/@font-face/g) || []).length;
+  const keyframeDeclarations = (cssCode.match(/@keyframes/g) || []).length;
+  const totalDeclarations = properties.length;
+  
+  // Find duplicate selectors
+  const selectorCounts = {};
+  selectors.forEach(sel => {
+    selectorCounts[sel] = (selectorCounts[sel] || 0) + 1;
+  });
+  const duplicateSelectors = Object.entries(selectorCounts).filter(([_, count]) => count > 1);
+
+  return {
+    totalSize: sizeInBytes,
+    totalLines: lines.length,
+    totalSelectors: selectors.length,
+    totalProperties: properties.length,
+    totalRules: rules.length,
+    totalMediaQueries: mediaQueries.length,
+    duplicateSelectors: duplicateSelectors.length,
+    importStatements,
+    fontFaceDeclarations,
+    keyframeDeclarations,
+    totalDeclarations,
+    uniqueSelectors: new Set(selectors).size,
+    uniqueProperties: new Set(properties).size,
+    mediaQueries: [...new Set(mediaQueries)],
+    mostUsedProperties: Object.entries(
+      properties.reduce((acc, prop) => {
+        acc[prop] = (acc[prop] || 0) + 1;
+        return acc;
+      }, {})
+    ).sort((a, b) => b[1] - a[1]).slice(0, 10) // Top 10 most used properties
+  };
+}
+
+/**
+ * Generate a detailed CSS analysis report
+ */
+function generateAnalysisReport(analysis) {
+  console.log("\n🔍 CSS Analysis Report:");
+  console.log("======================");
+  console.log(`📏 Total Size: ${(analysis.totalSize / 1024).toFixed(2)} KB (${analysis.totalSize} bytes)`);
+  console.log(`📄 Total Lines: ${analysis.totalLines.toLocaleString()}`);
+  console.log(`🎯 Total Selectors: ${analysis.totalSelectors.toLocaleString()}`);
+  console.log(`🏷️  Unique Selectors: ${analysis.uniqueSelectors.toLocaleString()}`);
+  console.log(`🔧 Total Properties: ${analysis.totalProperties.toLocaleString()}`);
+  console.log(`⚙️  Unique Properties: ${analysis.uniqueProperties.toLocaleString()}`);
+  console.log(`📋 Total Rules: ${analysis.totalRules.toLocaleString()}`);
+  console.log(`📱 Media Queries: ${analysis.totalMediaQueries.toLocaleString()}`);
+  console.log(`🗑️  Duplicate Selectors: ${analysis.duplicateSelectors.toLocaleString()}`);
+  console.log(`🔗 Import Statements: ${analysis.importStatements}`);
+  console.log(`🔤 Font Face Declarations: ${analysis.fontFaceDeclarations}`);
+  console.log(`🎬 Keyframe Animations: ${analysis.keyframeDeclarations}`);
+  
+  console.log("\n📊 Top 10 Most Used Properties:");
+  analysis.mostUsedProperties.forEach(([prop, count], index) => {
+    console.log(`   ${index + 1}. ${prop}: ${count} occurrences`);
+  });
+  
+  if (analysis.mediaQueries.length > 0) {
+    console.log(`\n📱 Media Queries Found:`);
+    analysis.mediaQueries.forEach((mq, index) => {
+      console.log(`   ${index + 1}. ${mq}`);
+    });
+  }
+  
+  console.log("\n💡 Optimization Suggestions:");
+  if (analysis.duplicateSelectors > 0) {
+    console.log(`   • Found ${analysis.duplicateSelectors} duplicate selectors that could be merged`);
+  }
+  if (analysis.importStatements > 0) {
+    console.log(`   • Found ${analysis.importStatements} @import statements (consider using @use or @forward for better performance)`);
+  }
+  if (analysis.totalSelectors > analysis.uniqueSelectors * 1.5) {
+    console.log(`   • High ratio of total to unique selectors - consider refactoring CSS`);
+  }
+  
+  console.log("");
+}
 
 /**
  * Validate configuration and show helpful messages
@@ -280,7 +408,66 @@ function applyAdditionalFixes(cssCode) {
     fixCount += borderFixCount;
   }
 
-  // 6. Fix malformed pseudo-elements and selectors
+  // 6. Fix more shorthand property overrides - IMPROVED PATTERNS
+  let paddingFixCount = 0;
+  let marginFixCount = 0;
+
+  // Fix padding shorthand after padding-* properties within the same rule block
+  const paddingRuleBlockPattern =
+    /([^{}]*\{[^{}]*(padding-top|padding-bottom|padding-left|padding-right)[^{}]*padding[^{}]*\})/g;
+  const paddingRuleBlocks = [...fixed.matchAll(paddingRuleBlockPattern)];
+
+  for (const [fullMatch] of paddingRuleBlocks) {
+    // Within each rule block, swap padding-* and padding
+    const withinPaddingBlockPattern =
+      /((padding-top|padding-bottom|padding-left|padding-right)\s*:[^;]+;)(\s*[^{}]*?)(padding\s*:[^;]+;)/;
+    if (withinPaddingBlockPattern.test(fullMatch)) {
+      const newBlock = fullMatch.replace(withinPaddingBlockPattern, "$3$1$4");
+      fixed = fixed.replace(fullMatch, newBlock);
+      paddingFixCount++;
+    }
+  }
+
+  // Fix margin shorthand after margin-* properties within the same rule block
+  const marginRuleBlockPattern =
+    /([^{}]*\{[^{}]*(margin-top|margin-bottom|margin-left|margin-right)[^{}]*margin[^{}]*\})/g;
+  const marginRuleBlocks = [...fixed.matchAll(marginRuleBlockPattern)];
+
+  for (const [fullMatch] of marginRuleBlocks) {
+    // Within each rule block, swap margin-* and margin
+    const withinMarginBlockPattern =
+      /((margin-top|margin-bottom|margin-left|margin-right)\s*:[^;]+;)(\s*[^{}]*?)(margin\s*:[^;]+;)/;
+    if (withinMarginBlockPattern.test(fullMatch)) {
+      const newBlock = fullMatch.replace(withinMarginBlockPattern, "$3$1$4");
+      fixed = fixed.replace(fullMatch, newBlock);
+      marginFixCount++;
+    }
+  }
+
+  if (paddingFixCount > 0) {
+    console.log(
+      `   ✓ Reordered ${paddingFixCount} padding property declarations`,
+    );
+    fixCount += paddingFixCount;
+  }
+
+  if (marginFixCount > 0) {
+    console.log(
+      `   ✓ Reordered ${marginFixCount} margin property declarations`,
+    );
+    fixCount += marginFixCount;
+  }
+
+  // 7. Fix common CSS typos and deprecated values
+  // Fix font-family typos
+  const fontFamilyMatches = fixed.match(/font-family\s*:\s*['"]?\s*seri['"]?/g);
+  if (fontFamilyMatches) {
+    fixed = fixed.replace(/font-family\s*:\s*['"]?\s*seri['"]?/g, "font-family: serif");
+    fixCount += fontFamilyMatches.length;
+    console.log(`   ✓ Fixed ${fontFamilyMatches.length} font-family typos`);
+  }
+
+  // 8. Fix malformed pseudo-elements and selectors
   const simplePseudoMatches = fixed.match(/::\s*;/g);
   if (simplePseudoMatches && simplePseudoMatches.length < 10) {
     fixed = fixed.replace(/::\s*;/g, ";");
@@ -303,11 +490,11 @@ function applyAdditionalFixes(cssCode) {
   // Remove multiple empty lines
   fixed = fixed.replace(/\n\s*\n\s*\n/g, "\n\n");
 
-  // 8. Report summary
+  // 10. Report summary
   if (fixCount > 0) {
     console.log(`   🎉 Applied ${fixCount} total structural fixes`);
     console.log(
-      `   📋 Breakdown: Background (${backgroundFixCount}), Border (${borderFixCount}), Other (${fixCount - backgroundFixCount - borderFixCount})`,
+      `   📋 Breakdown: Background (${backgroundFixCount}), Border (${borderFixCount}), Padding (${paddingFixCount}), Margin (${marginFixCount}), Other (${fixCount - backgroundFixCount - borderFixCount - paddingFixCount - marginFixCount})`,
     );
   } else {
     console.log("   ✅ No additional fixes needed");
@@ -517,6 +704,84 @@ FIXED CSS:`;
 }
 
 /**
+ * Create a cache key based on file content and configuration
+ */
+function createCacheKey(inputPath, cssContent, config) {
+  const contentHash = crypto
+    .createHash("sha256")
+    .update(cssContent)
+    .digest("hex")
+    .substring(0, 16);
+  
+  const configHash = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(config))
+    .digest("hex")
+    .substring(0, 16);
+    
+  return `${contentHash}-${configHash}`;
+}
+
+/**
+ * Check if we have a cache for this specific content/config combination
+ */
+async function getCache(inputPath, outputPath, cssContent, config) {
+  if (!CONFIG.ENABLE_CACHE) return null;
+
+  const cacheKey = createCacheKey(inputPath, cssContent, config);
+  const cacheDir = path.join(__dirname, ".cache");
+  const cachePath = path.join(cacheDir, `${cacheKey}.json`);
+  
+  if (await fs.pathExists(cachePath)) {
+    try {
+      const cacheData = await fs.readJson(cachePath);
+      
+      // Verify that the cached output file still exists
+      if (await fs.pathExists(outputPath)) {
+        const outputStats = await fs.stat(outputPath);
+        const cacheStats = await fs.stat(cachePath);
+        
+        // If output was modified after cache, the cache may be stale
+        if (outputStats.mtime > cacheStats.mtime) {
+          return null;
+        }
+        
+        console.log("💾 Cache hit - using previously optimized CSS");
+        return cacheData;
+      }
+    } catch (error) {
+      // If there's an error reading the cache, ignore it and reprocess
+      console.log("⚠️ Cache read error - reprocessing file");
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Save results to cache
+ */
+async function saveCache(inputPath, outputPath, cssContent, config, result) {
+  if (!CONFIG.ENABLE_CACHE) return;
+
+  const cacheKey = createCacheKey(inputPath, cssContent, config);
+  const cacheDir = path.join(__dirname, ".cache");
+  const cachePath = path.join(cacheDir, `${cacheKey}.json`);
+  
+  try {
+    await fs.ensureDir(cacheDir);
+    await fs.writeJson(cachePath, {
+      ...result,
+      timestamp: Date.now(),
+      inputPath,
+      outputPath
+    });
+  } catch (error) {
+    console.log("⚠️ Cache save error - continuing without cache");
+  }
+}
+
+/**
  * Enhanced optimization function
  */
 async function optimizeCss(inputPath, outputPath, options = {}) {
@@ -548,17 +813,71 @@ async function optimizeCss(inputPath, outputPath, options = {}) {
       );
     }
 
-    // Create backup
-    if (options.createBackup !== false) {
-      await fs.copy(inputPath, CONFIG.BACKUP_PATH);
-      console.log(`💾 Backup created: ${path.basename(CONFIG.BACKUP_PATH)}`);
-    }
-
     console.log("📖 Reading CSS file...");
     let css = await fs.readFile(inputPath, "utf8");
 
     if (!css.trim()) {
       throw new Error("CSS file is empty");
+    }
+
+    // Perform CSS analysis if requested
+    if (options.analyze) {
+      console.log("🔍 Analyzing CSS file...");
+      const analysis = analyzeCss(css);
+      generateAnalysisReport(analysis);
+    }
+
+    // Check cache first if enabled
+    if (CONFIG.ENABLE_CACHE) {
+      const cachedResult = await getCache(inputPath, outputPath, css, CONFIG);
+      if (cachedResult) {
+        // Write the cached result to the output file
+        await fs.outputFile(outputPath, cachedResult.optimizedCss);
+        
+        // Log cached results
+        console.log("🎉 Optimization completed successfully (from cache)!");
+        console.log(`📁 Output saved to: ${path.basename(outputPath)}`);
+
+        console.log("\n📊 Processing Statistics:");
+        console.log(`   ⏱️  Processing time: 0.00s (cached)`);
+        console.log(
+          `   📏 Lines: ${cachedResult.originalLines.toLocaleString()} → ${cachedResult.finalLines.toLocaleString()}`,
+        );
+        console.log(
+          `   💾 Size: ${(cachedResult.originalSize / 1024).toFixed(2)} KB → ${(cachedResult.finalSize / 1024).toFixed(2)} KB`,
+        );
+        
+        if (cachedResult.compressionRatio > 0) {
+          console.log(
+            `   🗜️  Compression: ${cachedResult.compressionRatio.toFixed(1)}% smaller`,
+          );
+        } else if (cachedResult.compressionRatio < 0) {
+          console.log(
+            `   📈 Size increase: ${Math.abs(cachedResult.compressionRatio).toFixed(1)}% (due to formatting/fixes)`,
+          );
+        } else {
+          console.log(`   ➖ Size: No change`);
+        }
+
+        console.log(
+          "\n✨ Your CSS is now optimized, formatted, and ready for production!",
+        );
+
+        return {
+          success: true,
+          originalSize: cachedResult.originalSize,
+          finalSize: cachedResult.finalSize,
+          compressionRatio: cachedResult.compressionRatio,
+          processingTime: 0, // Cached result
+          outputPath,
+        };
+      }
+    }
+
+    // Create backup only if not using cache
+    if (options.createBackup !== false) {
+      await fs.copy(inputPath, CONFIG.BACKUP_PATH);
+      console.log(`💾 Backup created: ${path.basename(CONFIG.BACKUP_PATH)}`);
     }
 
     const originalCss = css;
@@ -594,8 +913,8 @@ async function optimizeCss(inputPath, outputPath, options = {}) {
         );
       }
 
-      // Add media query sorting
-      plugins.push(sortMediaQueries({ sort: "mobile-first" }));
+      // Add media query sorting - custom approach for desktop → laptop → tablet → mobile
+      plugins.push(sortMediaQueries({ sort: "desktop-first" }));
 
       if (options.minify || CONFIG.ENABLE_MINIFICATION) {
         plugins.push(
@@ -712,6 +1031,19 @@ async function optimizeCss(inputPath, outputPath, options = {}) {
       "\n✨ Your CSS is now optimized, formatted, and ready for production!",
     );
 
+    // Cache the result if caching is enabled
+    if (CONFIG.ENABLE_CACHE) {
+      await saveCache(inputPath, outputPath, originalCss, CONFIG, {
+        optimizedCss: formattedCss,
+        originalSize,
+        finalSize,
+        compressionRatio,
+        processingTime: parseFloat(processingTime),
+        originalLines,
+        finalLines
+      });
+    }
+
     return {
       success: true,
       originalSize,
@@ -736,24 +1068,260 @@ async function optimizeCss(inputPath, outputPath, options = {}) {
   }
 }
 
+/**
+ * Process multiple CSS and CSS-in-JS files in batch mode
+ */
+async function processBatch(options) {
+  console.log("🔄 Processing CSS and CSS-in-JS files in batch mode...");
+  
+  // Find all CSS, JS, and TS files in the current directory and subdirectories
+  const cssFiles = await collectFiles('.', ['.css']);
+  const jsFiles = await collectFiles('.', ['.js', '.jsx', '.ts', '.tsx']);
+  
+  if (cssFiles.length === 0 && jsFiles.length === 0) {
+    console.log("❌ No CSS or JavaScript files found for batch processing");
+    return;
+  }
+  
+  console.log(`📝 Found ${cssFiles.length} CSS files and ${jsFiles.length} JavaScript/TypeScript files to process`);
+  
+  let processedCount = 0;
+  let successCount = 0;
+  let totalTime = 0;
+  
+  // Process CSS files
+  for (const cssFile of cssFiles) {
+    // Skip backup and output files to prevent processing optimized files
+    if (cssFile.includes('.backup.css') || cssFile.includes('.optimized.css') || cssFile.includes('.cache')) {
+      continue;
+    }
+    
+    console.log(`\n📄 Processing CSS: ${cssFile}`);
+    
+    try {
+      // Create output path based on input path
+      const outputDir = path.dirname(cssFile);
+      const outputBasename = path.basename(cssFile, '.css');
+      const outputFile = path.join(outputDir, `${outputBasename}.optimized.css`);
+      
+      const startTime = performance.now();
+      const result = await optimizeCss(cssFile, outputFile, options);
+      const endTime = performance.now();
+      
+      const processingTime = (endTime - startTime) / 1000; // Convert to seconds
+      totalTime += processingTime;
+      
+      if (result.success) {
+        successCount++;
+        console.log(`   ✅ Optimized: ${(result.originalSize / 1024).toFixed(2)} KB → ${(result.finalSize / 1024).toFixed(2)} KB (${result.compressionRatio.toFixed(1)}% smaller)`);
+      }
+    } catch (error) {
+      console.error(`   ❌ Error processing ${cssFile}:`, error.message);
+    }
+    
+    processedCount++;
+  }
+  
+  // Process JavaScript files for CSS-in-JS
+  for (const jsFile of jsFiles) {
+    // Skip node_modules and other directories
+    if (jsFile.includes('node_modules') || jsFile.includes('.cache')) {
+      continue;
+    }
+    
+    console.log(`\n📄 Processing CSS-in-JS: ${jsFile}`);
+    
+    try {
+      const startTime = performance.now();
+      const result = await processCSSInJS(jsFile, options);
+      const endTime = performance.now();
+      
+      const processingTime = (endTime - startTime) / 1000; // Convert to seconds
+      totalTime += processingTime;
+      
+      if (result && result.success) {
+        successCount++;
+        console.log(`   ✅ Optimized: ${(result.originalSize / 1024).toFixed(2)} KB → ${(result.finalSize / 1024).toFixed(2)} KB (${result.compressionRatio.toFixed(1)}% smaller)`);
+      }
+    } catch (error) {
+      console.error(`   ❌ Error processing CSS-in-JS from ${jsFile}:`, error.message);
+    }
+    
+    processedCount++;
+  }
+  
+  console.log(`\n🎉 Batch processing completed!`);
+  console.log(`📊 Summary: ${successCount}/${processedCount} files processed successfully`);
+  console.log(`⏱️  Total time: ${totalTime.toFixed(2)}s`);
+  console.log(`⚡ Average time per file: ${(totalTime / processedCount).toFixed(2)}s`);
+}
+
+/**
+ * Recursively collect files with specific extensions from a directory
+ */
+async function collectFiles(dir, extensions) {
+  const results = [];
+  const items = await fs.readdir(dir, { withFileTypes: true });
+  
+  for (const item of items) {
+    const fullPath = path.join(dir, item.name);
+    
+    if (item.isDirectory()) {
+      // Skip node_modules and cache directories
+      if (item.name !== 'node_modules' && item.name !== '.cache' && !item.name.startsWith('.')) {
+        const subDirResults = await collectFiles(fullPath, extensions);
+        results.push(...subDirResults);
+      }
+    } else if (item.isFile()) {
+      const ext = path.extname(item.name).toLowerCase();
+      if (extensions.includes(ext)) {
+        results.push(fullPath);
+      }
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * Extract CSS from CSS-in-JS libraries (styled-components, emotion, etc.)
+ */
+function extractCSSFromJS(content) {
+  const cssPatterns = [
+    // styled-components and emotion tagged template literals
+    /styled\.\w+\s*`([\s\S]*?)`/g,
+    /css\s*`\s*([\s\S]*?)\s*`/g,
+    /css\s*\(\s*`([\s\S]*?)`\s*\)/g,
+    /css\s*\(\s*\{([\s\S]*?)\}\s*\)/g,
+    /createGlobalStyle\s*`\s*([\s\S]*?)\s*`/g,
+    /keyframes\s*`\s*([\s\S]*?)\s*`/g,
+    
+    // Object styles (need to convert to CSS)
+    /styled\.\w+\s*\(\s*\{([\s\S]*?)\}\s*\)/g,
+    /css\s*\(\s*\{([\s\S]*?)\}\s*\)/g,
+    
+    // Styled JSX
+    /<style jsx>\s*{`([\s\S]*?)`}\s*<\/style>/g,
+    /<style jsx global>\s*{`([\s\S]*?)`}\s*<\/style>/g
+  ];
+  
+  let extractedCSS = '';
+  
+  for (const pattern of cssPatterns) {
+    let match;
+    while ((match = pattern.exec(content)) !== null) {
+      let css = match[1];
+      
+      // Convert object styles to CSS if needed
+      if (css.includes(':') && !css.includes('{') && !css.includes('}')) {
+        // This looks like object-style CSS - convert to standard CSS
+        css = convertObjectToCSS(css);
+      }
+      
+      extractedCSS += css + '\n';
+    }
+  }
+  
+  return extractedCSS;
+}
+
+/**
+ * Convert JavaScript object styles to CSS string
+ */
+function convertObjectToCSS(objStyle) {
+  // This is a simplified conversion - in practice, this would need to handle more complex cases
+  try {
+    // Try to parse as JSON if it looks like an object
+    if (typeof objStyle === 'string' && (objStyle.trim().startsWith('{') || objStyle.includes(':'))) {
+      // Simple conversion of object-style to CSS
+      let css = objStyle
+        .replace(/([A-Z])/g, '-$1')  // camelCase to kebab-case
+        .replace(/^[\s{]+|[\s}]+$/g, '')  // remove braces
+        .replace(/,(\s*\n)/g, ';$1')  // convert commas to semicolons
+        .replace(/:/g, ': ')  // add space after colons
+        .replace(/;\s*([a-z])/g, ';\n  $1'); // add newlines for readability
+      
+      return css;
+    }
+    return objStyle;
+  } catch (e) {
+    // If parsing fails, return as-is
+    return objStyle;
+  }
+}
+
+/**
+ * Process JavaScript/TS files that may contain CSS-in-JS
+ */
+async function processCSSInJS(filePath, options) {
+  console.log(`📄 Extracting CSS from: ${filePath}`);
+  
+  const content = await fs.readFile(filePath, 'utf8');
+  const extractedCSS = extractCSSFromJS(content);
+  
+  if (!extractedCSS.trim()) {
+    console.log(`   ⚠️ No CSS found in ${path.basename(filePath)}`);
+    return null;
+  }
+  
+  console.log(`   📝 Extracted CSS (${Buffer.byteLength(extractedCSS, 'utf8')} bytes)`);
+  
+  // Create a temporary CSS file with the extracted content
+  const tempDir = path.join(__dirname, '.temp');
+  await fs.ensureDir(tempDir);
+  
+  const tempCSSPath = path.join(tempDir, `${path.basename(filePath, path.extname(filePath))}.css`);
+  await fs.writeFile(tempCSSPath, extractedCSS);
+  
+  // Process the CSS using the regular optimizer
+  const outputDir = path.dirname(filePath);
+  const outputBasename = path.basename(filePath, path.extname(filePath));
+  const outputFile = path.join(outputDir, `${outputBasename}.optimized.css`);
+  
+  try {
+    const result = await optimizeCss(tempCSSPath, outputFile, options);
+    
+    // Clean up temporary file
+    await fs.remove(tempCSSPath);
+    
+    return result;
+  } catch (error) {
+    // Clean up temporary file even if optimization fails
+    if (await fs.pathExists(tempCSSPath)) {
+      await fs.remove(tempCSSPath);
+    }
+    throw error;
+  }
+}
+
 // CLI execution
 async function main() {
   const args = process.argv.slice(2);
   const options = {
-    minify: args.includes("--minify"),
+    minify: args.includes("--minify") || args.includes("-m"),
     createBackup: !args.includes("--no-backup"),
+    analyze: args.includes("--analyze") || args.includes("-a"),
+    cache: !args.includes("--no-cache"),
+    verbose: args.includes("--verbose") || args.includes("-v"),
+    batch: args.includes("--batch") || args.includes("-b"),
+    benchmark: args.includes("--benchmark") || args.includes("-B"),
   };
 
-  if (args.includes("--help")) {
+  if (args.includes("--help") || args.includes("-h")) {
     console.log(`
 🎨 Ultimate CSS Optimizer & Linter (Advanced with AI)
 
 Usage: node css-optimizer.js [options]
 
 Options:
-  --minify      Enable minification for production builds
-  --no-backup   Skip creating backup file
-  --help        Show this help message
+  -m, --minify      Enable minification for production builds
+  -a, --analyze     Analyze CSS and show detailed statistics
+  -v, --verbose     Enable verbose logging
+  -b, --batch       Process all CSS files in current directory and subdirectories
+  -B, --benchmark   Run performance benchmark tests
+  --no-backup       Skip creating backup file
+  --no-cache        Disable caching mechanism
+  -h, --help        Show this help message
 
 Features:
   ✅ Advanced CSS linting with Stylelint
@@ -761,6 +1329,8 @@ Features:
   🤖 AI-powered complex issue resolution (Groq API)
   ✅ PostCSS processing with autoprefixer
   ✅ Prettier formatting
+  ✅ Smart caching to avoid re-processing
+  ✅ Detailed analysis and reporting
 
 Environment Variables:
   GROQ_API_KEY  Your Groq API key for AI-powered fixes
@@ -770,9 +1340,120 @@ This is the ultimate version with AI-assisted CSS fixing capabilities.
     return;
   }
 
-  await optimizeCss(CONFIG.INPUT_PATH, CONFIG.OUTPUT_PATH, options);
+  // Update config based on CLI options
+  if (options.cache === false) {
+    CONFIG.ENABLE_CACHE = false;
+  }
+  if (options.verbose) {
+    CONFIG.ENABLE_VERBOSE_LOGGING = true;
+  }
+
+  // Handle benchmark mode
+  if (options.benchmark) {
+    await runBenchmark(options);
+  } 
+  // Handle batch processing
+  else if (options.batch) {
+    await processBatch(options);
+  } else {
+    await optimizeCss(CONFIG.INPUT_PATH, CONFIG.OUTPUT_PATH, options);
+  }
 }
 
+/**
+ * Run performance benchmark tests
+ */
+async function runBenchmark(options = {}) {
+  console.log("⏱️ Running Performance Benchmark...");
+  
+  const iterations = options.iterations || 3;
+  const results = [];
+  
+  for (let i = 0; i < iterations; i++) {
+    console.log(`\n📊 Benchmark iteration ${i + 1}/${iterations}...`);
+    
+    // Record start time
+    const startTime = performance.now();
+    const startMemory = process.memoryUsage().heapUsed;
+    
+    try {
+      // Run optimization
+      const result = await optimizeCss(CONFIG.INPUT_PATH, 
+        path.join(path.dirname(CONFIG.OUTPUT_PATH), `style.benchmark${i}.css`), 
+        { ...options, createBackup: false });
+      
+      const endTime = performance.now();
+      const endMemory = process.memoryUsage().heapUsed;
+      
+      const totalTime = (endTime - startTime) / 1000; // seconds
+      const memoryUsed = (endMemory - startMemory) / 1024 / 1024; // MB
+      
+      results.push({
+        iteration: i + 1,
+        processingTime: totalTime,
+        memoryUsed: Math.abs(memoryUsed),
+        originalSize: result.originalSize,
+        finalSize: result.finalSize,
+        compressionRatio: result.compressionRatio
+      });
+      
+      console.log(`   ✅ Iteration ${i + 1}: ${totalTime.toFixed(2)}s, ${(result.originalSize / 1024).toFixed(2)}KB → ${(result.finalSize / 1024).toFixed(2)}KB`);
+    } catch (error) {
+      console.error(`   ❌ Iteration ${i + 1} failed:`, error.message);
+      results.push({
+        iteration: i + 1,
+        error: error.message
+      });
+    }
+  }
+  
+  // Calculate statistics
+  const successfulResults = results.filter(r => !r.error);
+  
+  if (successfulResults.length > 0) {
+    const avgTime = successfulResults.reduce((sum, r) => sum + r.processingTime, 0) / successfulResults.length;
+    const minTime = Math.min(...successfulResults.map(r => r.processingTime));
+    const maxTime = Math.max(...successfulResults.map(r => r.processingTime));
+    const avgMemory = successfulResults.reduce((sum, r) => sum + r.memoryUsed, 0) / successfulResults.length;
+    const avgCompression = successfulResults.reduce((sum, r) => sum + r.compressionRatio, 0) / successfulResults.length;
+    
+    console.log(`\n🏆 Benchmark Results (average of ${successfulResults.length} successful runs):`);
+    console.log(`   ⏱️  Average processing time: ${avgTime.toFixed(2)}s`);
+    console.log(`   📊 Min processing time: ${minTime.toFixed(2)}s`);
+    console.log(`   📈 Max processing time: ${maxTime.toFixed(2)}s`);
+    console.log(`   💾 Average memory used: ${avgMemory.toFixed(2)} MB`);
+    console.log(`   🗜️  Average compression: ${avgCompression.toFixed(1)}%`);
+    
+    // Performance rating
+    let rating = "";
+    if (avgTime < 0.5) rating = "🔥 Excellent - extremely fast!";
+    else if (avgTime < 1) rating = "⚡ Very good performance!";
+    else if (avgTime < 2) rating = "👍 Good performance";
+    else if (avgTime < 5) rating = "👌 Acceptable performance";
+    else rating = "🐌 Could be improved";
+    
+    console.log(`   🏅 Performance rating: ${rating}`);
+    
+    return {
+      success: true,
+      results,
+      statistics: {
+        averageTime: avgTime,
+        minTime,
+        maxTime,
+        averageMemory: avgMemory,
+        averageCompression: avgCompression,
+        successfulRuns: successfulResults.length,
+        totalRuns: iterations
+      }
+    };
+  } else {
+    console.log("❌ All benchmark iterations failed");
+    return { success: false, results };
+  }
+}
+
+// CLI execution
 if (import.meta.url === `file://${process.argv[1]}`) {
   main().catch(console.error);
 }

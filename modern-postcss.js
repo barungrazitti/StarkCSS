@@ -74,10 +74,10 @@ export function getModernPostCSSPlugins(options = {}) {
     );
   }
 
-  // Media query sorting (mobile-first approach)
+  // Media query sorting (desktop-first approach - largest to smallest screens)
   plugins.push(
     sortMediaQueries({
-      sort: "mobile-first",
+      sort: "desktop-first",
       onError: (error) => {
         console.warn("⚠️ Media query sorting warning:", error.message);
       },
