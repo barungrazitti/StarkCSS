@@ -11,20 +11,23 @@
     "optimize:no-backup": "node css-optimizer.js --no-backup",
     "optimize:basic": "node css-optimizer-basic.js",
     "help": "node css-optimizer.js --help",
-    "test": "jest","test:coverage": "jest --coverage"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "cssnano": "^7.1.0",
     "fs-extra": "^11.3.0",
     "jest": "^30.0.5",
+    "jest-environment-node": "^30.2.0",
     "postcss": "^8.5.6",
     "postcss-safe-parser": "^7.0.1",
     "postcss-sort-media-queries": "^5.2.0",
     "prettier": "^3.6.2",
     "stylelint": "^16.23.0",
     "stylelint-config-standard": "^39.0.0",
-    "stylelint-prettier": "^5.0.3"
+    "stylelint-prettier": "^5.0.3",
+    "ts-jest": "^29.4.5"
   },
   "keywords": [
     "css",
