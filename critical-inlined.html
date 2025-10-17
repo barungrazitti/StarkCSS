@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical CSS Test</title>
+    <link rel="stylesheet" href="test-critical.css">
+
+<style>
+.header {
+  background: #333;
+  color: white;
+  padding: 1rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+}
+
+.hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-bottom: 1rem;
+}
+</style>
+</head>
+<body>
+    <header class="header">
+        <nav>
+            <h1>Test Site</h1>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <h1>Welcome to Our Site</h1>
+            <p>This is a hero section with critical content.</p>
+            <a href="#" class="btn">Get Started</a>
+        </section>
+        
+        <div class="content">
+            <p>This content should also be considered critical.</p>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <p>Footer content - non-critical</p>
+    </footer>
+    
+    <aside class="sidebar">
+        <div class="card">
+            <h3>Sidebar Content</h3>
+            <p>Non-critical sidebar content</p>
+        </div>
+    </aside>
+</body>
+</html>

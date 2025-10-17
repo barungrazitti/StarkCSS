@@ -1,0 +1,608 @@
+/* MOST ERROR-PRONE CSS TEST FILE */
+/* This file contains every possible CSS error and issue */
+
+/* ===== SYNTAX ERRORS ===== */
+.missing-brace {
+  color: red;
+
+.invalid-property: value;
+color: blue;;;
+
+.missing-semicolon {
+  color: red
+  background: blue
+
+/* ===== PROPERTY ERRORS ===== */
+.property-typos {
+  colour: red; /* Should be color */
+  backgrond: blue; /* Should be background */
+  widht: 100px; /* Should be width */
+  heigth: 200px; /* Should be height */
+  margn: 10px; /* Should be margin */
+  paddng: 15px; /* Should be padding */
+  positon: absolute; /* Should be position */
+  displa: block; /* Should be display */
+  visiblity: hidden; /* Should be visibility */
+  z-indx: 100; /* Should be z-index */
+}
+
+/* ===== VALUE ERRORS ===== */
+.missing-units {
+  width: 100;
+  height: 200;
+  margin: 10;
+  padding: 15;
+  font-size: 14;
+  border-width: 2;
+  top: 5;
+  left: 10;
+}
+
+.invalid-units {
+  width: 100xp; /* Typo */
+  height: 200pxx; /* Extra x */
+  margin: 10emmm; /* Extra m */
+  padding: 15pp; /* Invalid */
+  font-size: 14pttt; /* Extra t */
+}
+
+.invalid-values {
+  display: blok; /* Typo */
+  position: relatve; /* Typo */
+  float: lef; /* Typo */
+  clear: bot; /* Typo */
+  text-align: cente; /* Typo */
+  font-weight: bol; /* Typo */
+  visibility: hidde; /* Typo */
+  overflow: hidde; /* Typo */
+}
+
+/* ===== DEPRECATED PROPERTIES ===== */
+.deprecated {
+  word-break: break-word; /* Deprecated */
+  float: left; /* Often deprecated */
+  clear: both; /* Often deprecated */
+  zoom: 1; /* IE specific */
+  -webkit-box-sizing: border-box; /* Old prefix */
+  -moz-border-radius: 5px; /* Old prefix */
+  -ms-transform: rotate(5deg); /* Old prefix */
+}
+
+/* ===== SHOPTHAND OVERRIDE ERRORS ===== */
+.shorthand-override-1 {
+  background-color: red;
+  background: blue url(image.jpg);
+  margin-top: 10px;
+  margin: 20px;
+  padding-left: 15px;
+  padding: 10px 20px;
+  border-color: #333;
+  border: 2px solid #000;
+  font-family: Arial;
+  font: 14px sans-serif;
+}
+
+.shorthand-override-2 {
+  border-width: 2px;
+  border-style: solid;
+  border-color: red;
+  border: 1px dashed blue;
+  list-style-type: disc;
+  list-style: square;
+}
+
+/* ===== DUPLICATE PROPERTIES ===== */
+.duplicate-props {
+  color: red;
+  color: blue;
+  background: white;
+  background: #fff;
+  margin: 10px;
+  margin: 15px;
+}
+
+/* ===== INVALID SELECTORS ===== */
+.invalid-selectors {
+  .class-without-parent { /* Invalid in CSS */
+    color: red;
+  }
+  
+  div::before::after { /* Invalid pseudo combination */
+    content: "";
+  }
+  
+  @media screen and (max-width: 768px) {
+    .responsive {
+      font-size: 14px;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .responsive {
+      font-size: 16px;
+    }
+  }
+}
+
+/* ===== VENDOR PREFIX ISSUES ===== */
+.vendor-prefix-issues {
+  -webkit-transform: rotate(5deg);
+  transform: rotate(5deg);
+  -moz-transition: all 0.3s;
+  transition: all 0.3s;
+  -ms-box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* ===== COLOR ERRORS ===== */
+.color-errors {
+  color: #gggggg; /* Invalid hex */
+  background: rgb(300, 300, 300); /* Invalid rgb values */
+  border-color: rgba(-1, 0, 0, 0.5); /* Negative values */
+  color: transparentt; /* Typo */
+  background: inheritance; /* Invalid */
+}
+
+/* ===== MEDIA QUERY ERRORS ===== */
+@media (max-width: 768px) {
+  .media-error {
+    font-size: 14px;
+  }
+}
+
+@media screen and (min-width: 769px) {
+  .media-error {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .media-error {
+    font-size: 12px;
+  }
+}
+
+/* ===== ANIMATION ERRORS ===== */
+.animation-errors {
+  animation: slideIn 0.3s ease-in-out;
+  -webkit-animation: slideIn 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ===== FLEXBOX ERRORS ===== */
+.flexbox-errors {
+  display: flex;
+  align-items: anchor-center; /* Invalid value */
+  justify-content: space-betweeen; /* Typo */
+  flex-direction: row-reverse;
+  flex-wrap: wrap-reverse;
+  align-content: strech; /* Typo */
+}
+
+/* ===== GRID ERRORS ===== */
+.grid-errors {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px; /* Deprecated */
+  gap: 20px;
+  grid-auto-flow: dense;
+  align-items: strech; /* Typo */
+}
+
+/* ===== CSS CUSTOM PROPERTY ERRORS ===== */
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --font-size-base: 16px;
+  --spacing-unit: 8px;
+}
+
+.custom-prop-errors {
+  color: var(--primary-color);
+  background: var(--secondary-color);
+  font-size: var(--font-size-base);
+  padding: var(--spacing-unit);
+  margin: var(--non-existent-var); /* Invalid variable */
+}
+
+/* ===== CALC() ERRORS ===== */
+.calc-errors {
+  width: calc(100% - 20px);
+  height: calc(50vh + 10px);
+  margin: calc(1rem * 2);
+  padding: calc(var(--spacing-unit) * 1.5);
+  font-size: calc(var(--font-size-base) * 1.2);
+}
+
+/* ===== FUNCTION ERRORS ===== */
+.function-errors {
+  background: linear-gradient(45deg, #ff0000, #0000ff);
+  transform: rotate(5deg) scale(1.1);
+  filter: blur(2px) brightness(1.2);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
+
+/* ===== PSEUDO-ELEMENT ERRORS ===== */
+.pseudo-element-errors {
+  ::before {
+    content: "";
+    display: block;
+  }
+  
+  ::after {
+    content: "";
+    display: block;
+  }
+  
+  ::first-letter {
+    font-weight: bold;
+  }
+  
+  ::first-line {
+    font-weight: normal;
+  }
+}
+
+/* ===== PSEUDO-CLASS ERRORS ===== */
+.pseudo-class-errors {
+  :hover {
+    color: red;
+  }
+  
+  :active {
+    color: blue;
+  }
+  
+  :focus {
+    outline: 2px solid blue;
+  }
+  
+  :first-child {
+    margin-top: 0;
+  }
+  
+  :last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* ===== ATTRIBUTE SELECTOR ERRORS ===== */
+.attribute-errors {
+  [type="text"] {
+    border: 1px solid #ccc;
+  }
+  
+  [class*="btn"] {
+    cursor: pointer;
+  }
+  
+  [data-attribute] {
+    display: block;
+  }
+}
+
+/* ===== COMBINATOR ERRORS ===== */
+.combinator-errors {
+  .parent > .child {
+    color: red;
+  }
+  
+  .ancestor .descendant {
+    color: blue;
+  }
+  
+  .sibling + .adjacent {
+    margin-top: 10px;
+  }
+  
+  .element ~ .general {
+    margin-left: 10px;
+  }
+}
+
+/* ===== IMPORT ERRORS ===== */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap");
+
+@import "styles.css";
+
+/* ===== FONT-FACE ERRORS ===== */
+@font-face {
+  font-family: 'CustomFont';
+  src: url('font.woff2') format('woff2'),
+       url('font.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ===== COUNTER ERRORS ===== */
+.counter-errors {
+  counter-reset: section;
+}
+
+.counter-errors h2::before {
+  counter-increment: section;
+  content: "Section " counter(section) ": ";
+}
+
+/* ===== COLUMN ERRORS ===== */
+.column-errors {
+  column-count: 3;
+  column-gap: 20px;
+  column-rule: 1px solid #ccc;
+  column-width: 200px;
+}
+
+/* ===== FILTER ERRORS ===== */
+.filter-errors {
+  filter: grayscale(100%);
+  filter: blur(5px);
+  filter: brightness(1.2);
+  filter: contrast(1.1);
+  filter: sepia(50%);
+}
+
+/* ===== BLEND MODE ERRORS ===== */
+.blend-mode-errors {
+  mix-blend-mode: multiply;
+  background-blend-mode: screen;
+  isolation: isolate;
+}
+
+/* ===== CLIP PATH ERRORS ===== */
+.clip-path-errors {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  clip-path: circle(50% at 50% 50%);
+  clip-path: ellipse(50% 50% at 50% 50%);
+  clip-path: inset(10px 10px 10px 10px);
+}
+
+/* ===== MASK ERRORS ===== */
+.mask-errors {
+  mask-image: url('mask.png');
+  mask-mode: alpha;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+/* ===== OBJECT FIT ERRORS ===== */
+.object-fit-errors {
+  object-fit: cover;
+  object-fit: contain;
+  object-fit: fill;
+  object-fit: none;
+  object-fit: scale-down;
+}
+
+/* ===== USER SELECT ERRORS ===== */
+.user-select-errors {
+  user-select: none;
+  user-select: text;
+  user-select: all;
+  user-select: auto;
+}
+
+/* ===== POINTER EVENTS ERRORS ===== */
+.pointer-events-errors {
+  pointer-events: none;
+  pointer-events: auto;
+}
+
+/* ===== WILL CHANGE ERRORS ===== */
+.will-change-errors {
+  will-change: transform;
+  will-change: opacity;
+  will-change: auto;
+}
+
+/* ===== BACKFACE VISIBILITY ERRORS ===== */
+.backface-visibility-errors {
+  backface-visibility: hidden;
+  backface-visibility: visible;
+}
+
+/* ===== PERSPECTIVE ERRORS ===== */
+.perspective-errors {
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+}
+
+/* ===== TRANSFORM STYLE ERRORS ===== */
+.transform-style-errors {
+  transform-style: flat;
+  transform-style: preserve-3d;
+}
+
+/* ===== BOX SIZING ERRORS ===== */
+.box-sizing-errors {
+  box-sizing: content-box;
+  box-sizing: border-box;
+}
+
+/* ===== OVERFLOW ERRORS ===== */
+.overflow-errors {
+  overflow: visible;
+  overflow: hidden;
+  overflow: scroll;
+  overflow: auto;
+}
+
+/* ===== RESIZE ERRORS ===== */
+.resize-errors {
+  resize: none;
+  resize: both;
+  resize: horizontal;
+  resize: vertical;
+}
+
+/* ===== OUTLINE ERRORS ===== */
+.outline-errors {
+  outline: none;
+  outline: 2px solid blue;
+  outline-offset: 2px;
+}
+
+/* ===== CURSOR ERRORS ===== */
+.cursor-errors {
+  cursor: pointer;
+  cursor: default;
+  cursor: move;
+  cursor: text;
+  cursor: wait;
+  cursor: help;
+  cursor: progress;
+}
+
+/* ===== QUERIES ERRORS ===== */
+@media (prefers-color-scheme: dark) {
+  .dark-mode {
+    background: #333;
+    color: #fff;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reduced-motion {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* ===== MODERN CSS ERRORS ===== */
+.modern-css-errors {
+  container-type: inline-size;
+  container-name: sidebar;
+}
+
+@container sidebar (min-width: 300px) {
+  .sidebar-content {
+    font-size: 14px;
+  }
+}
+
+@layer base, components, utilities {
+  @layer base {
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  }
+  
+  @layer components {
+    .btn {
+      padding: 8px 16px;
+    }
+  }
+  
+  @layer utilities {
+    .text-center {
+      text-align: center;
+    }
+  }
+}
+
+/* ===== COLOR FUNCTION ERRORS ===== */
+.color-function-errors {
+  color: oklch(0.5 0.2 180);
+  background: lch(50% 20 180);
+  border-color: color-mix(in srgb, red, blue);
+  background: lab(50% 20 30);
+}
+
+/* ===== LOGICAL PROPERTY ERRORS ===== */
+.logical-property-errors {
+  margin-inline-start: 10px;
+  margin-inline-end: 10px;
+  margin-block-start: 5px;
+  margin-block-end: 5px;
+  padding-inline: 10px;
+  padding-block: 5px;
+  border-inline-width: 1px;
+  border-block-width: 1px;
+}
+
+/* ===== NESTING ERRORS ===== */
+.nesting-errors {
+  color: blue;
+  
+  &:hover {
+    color: red;
+  }
+  
+  &::before {
+    content: "";
+  }
+  
+  .child {
+    font-size: 14px;
+    
+    &.active {
+      font-weight: bold;
+    }
+  }
+}
+
+/* ===== FINAL MESS ===== */
+.final-mess {
+  /* All errors combined */
+  colour: #gggggg;
+  backgrond: url(image.jpg);
+  widht: 100xp;
+  heigth: 200pxx;
+  margn: 10;
+  paddng: 15pp;
+  positon: relatve;
+  displa: blok;
+  visiblity: hidde;
+  word-break: break-word;
+  background-color: red;
+  background: blue;
+  margin-top: 10px;
+  margin: 20px;
+  color: red;
+  color: blue;
+  -webkit-transform: rotate(5deg);
+  transform: rotate(5deg);
+  align-items: anchor-center;
+  justify-content: space-betweeen;
+  grid-gap: 20px;
+  var(--non-existent-var);
+  calc(100% - 20px);
+  filter: blur(2px) brightness(1.2);
+  mix-blend-mode: multiply;
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  mask-image: url('mask.png');
+  object-fit: cover;
+  user-select: none;
+  pointer-events: none;
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  overflow: hidden;
+  resize: both;
+  outline: 2px solid blue;
+  cursor: pointer;
+  container-type: inline-size;
+  color: oklch(0.5 0.2 180);
+  margin-inline-start: 10px;
+  
+  &:hover {
+    color: red;
+  }
+  
+  &::before {
+    content: "";
+  }
+}
