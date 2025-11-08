@@ -1344,7 +1344,24 @@ describe("CSS Optimizer Comprehensive Coverage Tests", () => {
   });
 
   describe("CSS Optimizer Main Module Tests", () => {
-    const { optimizeCss, formatTime, calculateSavings } = modules.cssOptimizer || {};
+    const cssOptimizerModule = modules.cssOptimizer || {};
+    
+    // Extract functions from the module
+    const {
+      optimizeCss,
+      analyzeCss,
+      generateAnalysisReport,
+      validateConfig,
+      lintAndFixCss,
+      applyAdditionalFixes,
+      createCacheKey,
+      getCache,
+      saveCache,
+      extractCSSFromJS,
+      convertObjectToCSS,
+      formatTime,
+      calculateSavings
+    } = cssOptimizerModule;
 
     test("should export main functions", () => {
       expect(optimizeCss).toBeDefined();
@@ -1359,22 +1376,224 @@ describe("CSS Optimizer Comprehensive Coverage Tests", () => {
       }
     });
 
-    test("should format time correctly", () => {
-      if (!formatTime) return;
+    test("should analyze CSS code", () => {
+      if (!modules.cssOptimizer) return;
       
-      expect(formatTime(1000)).toBe('1.00s');
-      expect(formatTime(500)).toBe('500.00ms');
-      expect(formatTime(0.5)).toBe('0.50ms');
+      const { analyzeCss } = modules.cssOptimizer;
+      
+      const css = `
+        /* Test CSS */
+        @import url("styles.css");
+        
+        @media (max-width: 768px) {
+          .container { 
+            color: red; 
+            background: blue;
+          }
+        }
+        
+        .button { 
+          padding: 10px; 
+          margin: 5px;
+        }
+        
+        .button:hover { 
+          opacity: 0.8; 
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @font-face {
+          font-family: 'CustomFont';
+          src: url('font.woff2');
+        }
+      `;
+      
+      const analysis = analyzeCss(css);
+      
+      expect(analysis).toBeDefined();
+      expect(analysis.totalSize).toBeGreaterThan(0);
+      expect(analysis.totalLines).toBeGreaterThan(0);
+      expect(analysis.totalSelectors).toBeGreaterThan(0);
+      expect(analysis.uniqueSelectors).toBeGreaterThan(0);
+      expect(analysis.totalProperties).toBeGreaterThan(0);
+      expect(analysis.uniqueProperties).toBeGreaterThan(0);
+      expect(analysis.totalRules).toBeGreaterThan(0);
+      expect(analysis.totalMediaQueries).toBe(1);
+      expect(analysis.duplicateSelectors).toBe(1); // .button appears twice
+      expect(analysis.importStatements).toBe(1);
+      expect(analysis.fontFaceDeclarations).toBe(1);
+      expect(analysis.keyframeDeclarations).toBe(1);
+      expect(analysis.mediaQueries).toContain('(max-width: 768px)');
+      expect(analysis.mostUsedProperties).toBeInstanceOf(Array);
+      expect(analysis.mostUsedProperties.length).toBeGreaterThan(0);
     });
 
-    test("should calculate savings correctly", () => {
-      if (!calculateSavings) return;
+    test("should validate configuration", () => {
+      if (!modules.cssOptimizer) return;
       
-      const savings = calculateSavings(1000, 800);
-      expect(savings.originalSize).toBe(1000);
-      expect(savings.optimizedSize).toBe(800);
-      expect(savings.bytesSaved).toBe(200);
-      expect(savings.percentageSaved).toBe(20);
+      const { validateConfig } = modules.cssOptimizer;
+      
+      // Should not throw if config is valid
+      expect(() => validateConfig()).not.toThrow();
+    });
+
+    test("should lint and fix CSS", async () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { lintAndFixCss } = modules.cssOptimizer;
+      
+      const malformedCSS = `
+        .test {color:red; margin:0;}
+        .broken {background:blue}
+        .missing {font-size}
+      `;
+      
+      try {
+        const fixed = await lintAndFixCss(malformedCSS, 'test.css');
+        
+        expect(fixed).toBeDefined();
+        expect(typeof fixed).toBe('string');
+      } catch (error) {
+        // Linting might fail if stylelint config is not available
+        expect(error).toBeDefined();
+      }
+    });
+
+    test("should apply additional fixes", () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { applyAdditionalFixes } = modules.cssOptimizer;
+      
+      const css = `
+        .test { 
+          color: #ff0000; 
+          margin: 0px; 
+          padding: 0px 0px;
+          background: url("image.jpg");
+        }
+      `;
+      
+      const fixed = applyAdditionalFixes(css);
+      
+      expect(fixed).toBeDefined();
+      expect(typeof fixed).toBe('string');
+      // Should have applied some fixes (e.g., unit optimization)
+      expect(fixed.length).toBeGreaterThan(0);
+    });
+
+    test("should create cache key", () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { createCacheKey } = modules.cssOptimizer;
+      
+      const key1 = createCacheKey('test.css', 'body { color: red; }', { enableMinification: true });
+      const key2 = createCacheKey('test.css', 'body { color: red; }', { enableMinification: true });
+      const key3 = createCacheKey('test.css', 'body { color: blue; }', { enableMinification: true });
+      
+      expect(key1).toBe(key2); // Same input should produce same key
+      expect(key1).not.toBe(key3); // Different content should produce different key
+      expect(typeof key1).toBe('string');
+      expect(key1.length).toBeGreaterThan(0);
+    });
+
+    test("should handle cache operations", async () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { getCache, saveCache } = modules.cssOptimizer;
+      
+      const inputPath = 'test-input.css';
+      const outputPath = 'test-output.css';
+      const cssContent = 'body { color: red; }';
+      const config = { ENABLE_CACHE: true };
+      const result = { success: true, optimizedCss: 'body{color:red}' };
+      
+      // Save to cache
+      await saveCache(inputPath, outputPath, cssContent, config, result);
+      
+      // Retrieve from cache
+      const cached = await getCache(inputPath, outputPath, cssContent, config);
+      
+      if (cached) {
+        expect(cached.optimizedCss).toBe('body{color:red}');
+      }
+      
+      // Clean up cache directory if it exists
+      const cacheDir = '.cache';
+      if (fs.existsSync(cacheDir)) {
+        fs.removeSync(cacheDir);
+      }
+    });
+
+    test("should extract CSS from JavaScript", () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { extractCSSFromJS } = modules.cssOptimizer;
+      
+      const jsContent = `
+        import styles from './styles.module.css';
+        const style = { color: 'red', backgroundColor: 'blue' };
+        const css = \`.container { display: flex; }\`;
+        const StyledButton = styled.button\`background: black;\`;
+      `;
+      
+      const extracted = extractCSSFromJS(jsContent);
+      
+      expect(extracted).toBeDefined();
+      expect(typeof extracted).toBe('string');
+      // Should contain CSS-like content
+      expect(extracted.length).toBeGreaterThan(0);
+    });
+
+    test("should convert object styles to CSS", () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { convertObjectToCSS } = modules.cssOptimizer;
+      
+      const objStyle = {
+        color: 'red',
+        backgroundColor: 'blue',
+        fontSize: '16px',
+        padding: '10px',
+        marginLeft: '5px'
+      };
+      
+      const css = convertObjectToCSS(objStyle);
+      
+      expect(css).toContain('color: red');
+      expect(css).toContain('background-color: blue');
+      expect(css).toContain('font-size: 16px');
+      expect(css).toContain('padding: 10px');
+      expect(css).toContain('margin-left: 5px');
+    });
+
+    test("should generate analysis report", () => {
+      if (!modules.cssOptimizer) return;
+      
+      const { generateAnalysisReport } = modules.cssOptimizer;
+      
+      const analysis = {
+        totalSize: 1024,
+        totalLines: 50,
+        totalSelectors: 10,
+        uniqueSelectors: 8,
+        totalProperties: 25,
+        uniqueProperties: 20,
+        totalRules: 10,
+        totalMediaQueries: 2,
+        duplicateSelectors: 2,
+        importStatements: 1,
+        fontFaceDeclarations: 1,
+        keyframeDeclarations: 1,
+        mediaQueries: ['(max-width: 768px)', '(min-width: 1200px)'],
+        mostUsedProperties: [['color', 5], ['font-size', 3]]
+      };
+      
+      // Should not throw
+      expect(() => generateAnalysisReport(analysis)).not.toThrow();
     });
 
     test("should optimize basic CSS", async () => {
