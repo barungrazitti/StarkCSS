@@ -1,9 +1,9 @@
 // Basic CSS optimizer tests
 import { jest } from '@jest/globals';
-import { optimizeCss } from '../css-optimizer.js';
-import { ErrorHandler } from '../error-handler.js';
-import { SecurityUtils } from '../security.js';
-import { FileHandler } from '../file-handler.js';
+import { optimizeCss } from './css-optimizer.js';
+import { ErrorHandler } from './error-handler.js';
+import { SecurityUtils } from './security.js';
+import { FileHandler } from './file-handler.js';
 
 describe("CSS Optimizer Basic Tests", () => {
   describe("Configuration", () => {

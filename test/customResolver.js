@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 const moduleCache = new Map();
 
 // Custom resolver function
-export default function customResolver(basename, options) {
+function customResolver(basename, options) {
   const { basedir, defaultResolver } = options;
   
   // Check cache first
@@ -248,3 +248,9 @@ export function getCacheSize() {
 export function getCacheEntries() {
   return Array.from(moduleCache.entries());
 }
+
+// Export the resolver with Jest's expected interface
+export default {
+  sync: customResolver,
+  async: async (basename, options) => customResolver(basename, options)
+};

@@ -1,9 +1,9 @@
 // Performance testing for CSS optimizer
 import { jest } from '@jest/globals';
-import { optimizeCss } from '../css-optimizer.js';
-import { ErrorHandler } from '../error-handler.js';
-import { SecurityUtils } from '../security.js';
-import { FileHandler } from '../file-handler.js';
+import { optimizeCss } from './css-optimizer.js';
+import { ErrorHandler } from './error-handler.js';
+import { SecurityUtils } from './security.js';
+import { FileHandler } from './file-handler.js';
 import fs from 'fs-extra';
 import path from 'path';
 
