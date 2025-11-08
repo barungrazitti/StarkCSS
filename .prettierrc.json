@@ -1,0 +1,196 @@
+{
+  "semi": true,
+  "trailingComma": "none",
+  "singleQuote": false,
+  "quoteProps": "as-needed",
+  "jsxSingleQuote": false,
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "arrowParens": "avoid",
+  "rangeStart": 0,
+  "rangeEnd": null,
+  "requirePragma": false,
+  "insertPragma": false,
+  "proseWrap": "preserve",
+  "htmlWhitespaceSensitivity": "css",
+  "vueIndentScriptAndStyle": false,
+  "endOfLine": "lf",
+  "embeddedLanguageFormatting": "auto",
+  "singleAttributePerLine": false,
+  
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.md",
+      "options": {
+        "printWidth": 100,
+        "proseWrap": "always",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.yml",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.yaml",
+      "options": {
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": "*.css",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.scss",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.sass",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.html",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.vue",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.jsx",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": true,
+        "jsxSingleQuote": true
+      }
+    },
+    {
+      "files": "*.tsx",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": true,
+        "jsxSingleQuote": true
+      }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.js",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.mjs",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.cjs",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": ["*.test.js", "*.spec.js", "test-*.js"],
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "*.config.js",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "bin/**/*.js",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "src/**/*.js",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "utils/**/*.js",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "core/**/*.js",
+      "options": {
+        "printWidth": 100,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    },
+    {
+      "files": "test/**/*.js",
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": false
+      }
+    }
+  ]
+}

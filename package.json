@@ -4,6 +4,34 @@
   "version": "2.1.0",
   "description": "Next-generation AI-powered CSS optimizer combining regex fixes with Groq's Llama 3.1 70B for complex structural issues",
   "main": "css-optimizer.js",
+  "exports": {
+    ".": {
+      "import": "./css-optimizer.js",
+      "require": "./css-optimizer.cjs"
+    },
+      "./core": {
+        "import": "./src/core/index.js",
+        "require": "./src/core/index.cjs"
+      },
+      "./utils": {
+        "import": "./src/utils/index.js",
+        "require": "./src/utils/index.cjs"
+      }
+  },
+  "types": "types/index.d.ts",
+  "files": [
+    "css-optimizer.js",
+    "css-optimizer-basic.js",
+    "src/",
+    "types/",
+    "LICENSE",
+    "README.md",
+    "CRUSH.md"
+  ],
+  "bin": {
+    "css-optimizer": "./bin/css-optimizer.js",
+    "optimize-css": "./bin/css-optimizer.js"
+  },
   "scripts": {
     "optimize": "node css-optimizer.js",
     "optimize:advanced": "node css-optimizer.js",
@@ -12,23 +40,88 @@
     "optimize:basic": "node css-optimizer-basic.js",
     "help": "node css-optimizer.js --help",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "test:performance": "node test/performance-test.js",
+    "lint": "eslint . --ext .js,.mjs,.cjs",
+    "lint:fix": "eslint . --ext .js,.mjs,.cjs --fix",
+    "lint:css": "npx stylelint \"**/*.css\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "format:staged": "pretty-quick --staged",
+    "typecheck": "tsc --noEmit",
+    "security:audit": "npm audit",
+    "security:check": "npm audit --audit-level moderate",
+    "security:fix": "npm audit fix",
+    "build": "npm run typecheck && npm run lint && npm run test:ci",
+    "build:prod": "npm run build && npm run format",
+    "clean": "rm -rf .cache coverage dist",
+    "prepare": "husky install",
+    "precommit": "npm run lint:staged && npm run test",
+    "prepush": "npm run test:ci && npm run security:audit",
+    "release:dry": "npm run build && npm pack --dry-run",
+    "release": "npm run build && npm publish",
+    "benchmark": "node css-optimizer.js --benchmark",
+    "dev": "nodemon --exec 'npm run optimize' --watch style.css"
   },
   "devDependencies": {
+    "@jest/globals": "^30.0.5",
+    "@types/jest": "^30.0.5",
+    "@types/node": "^20.0.0",
     "autoprefixer": "^10.4.20",
     "cssnano": "^7.1.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jest": "^28.0.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.3",
     "fs-extra": "^11.3.0",
+    "husky": "^9.0.0",
     "jest": "^30.0.5",
     "jest-environment-node": "^30.2.0",
+    "lint-staged": "^15.0.0",
+    "nodemon": "^3.0.0",
     "postcss": "^8.5.6",
     "postcss-safe-parser": "^7.0.1",
     "postcss-sort-media-queries": "^5.2.0",
     "prettier": "^3.6.2",
+    "pretty-quick": "^4.0.0",
     "stylelint": "^16.23.0",
     "stylelint-config-standard": "^39.0.0",
     "stylelint-prettier": "^5.0.3",
-    "ts-jest": "^29.4.5"
+    "ts-jest": "^29.4.5",
+    "typescript": "^5.0.0"
   },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "chokidar": "^4.0.1",
+    "commander": "^12.1.0",
+    "dotenv": "^17.2.1",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.0"
+  },
+  "peerDependencies": {
+    "postcss": ">=8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "postcss": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
   "keywords": [
     "css",
     "optimizer",
@@ -43,27 +136,82 @@
     "machine-learning",
     "postcss",
     "stylelint",
-    "prettier"
+    "prettier",
+    "css-optimization",
+    "css-minification",
+    "css-linting",
+    "css-formatting",
+    "css-analysis",
+    "css-validation",
+    "css-fixing",
+    "css-performance",
+    "css-security",
+    "css-tools",
+    "css-utilities",
+    "css-automation",
+    "css-enhancement",
+    "css-improvement",
+    "css-quality",
+    "css-best-practices",
+    "css-standards",
+    "css-compliance",
+    "css-accessibility",
+    "css-maintenance",
+    "css-development",
+    "css-workflow",
+    "css-productivity",
+    "css-efficiency",
+    "css-reliability",
+    "css-scalability",
+    "css-maintainability"
   ],
-  "author": "AI CSS Optimizer Team",
+  "author": {
+    "name": "AI CSS Optimizer Team",
+    "email": "team@css-optimizer.com",
+    "url": "https://github.com/your-username/ultimate-ai-css-optimizer"
+  },
+  "contributors": [
+    {
+      "name": "Contributor Name",
+      "email": "contributor@example.com"
+    }
+  ],
   "license": "MIT",
-  "dependencies": {
-    "chalk": "^5.3.0",
-    "chokidar": "^4.0.1",
-    "commander": "^12.1.0",
-    "dotenv": "^17.2.1",
-    "fs-extra": "^11.3.0",
-    "glob": "^11.0.0"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/ultimate-ai-css-optimizer.git"
+    "url": "https://github.com/your-username/ultimate-ai-css-optimizer.git",
+    "directory": ""
   },
   "bugs": {
-    "url": "https://github.com/your-username/ultimate-ai-css-optimizer/issues"
+    "url": "https://github.com/your-username/ultimate-ai-css-optimizer/issues",
+    "email": "issues@css-optimizer.com"
   },
-  "homepage": "https://github.com/your-username/ultimate-ai-css-optimizer#readme"
+  "homepage": "https://github.com/your-username/ultimate-ai-css-optimizer#readme",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/your-username"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,sass}": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
 }

@@ -1,0 +1,302 @@
+{
+  "root": true,
+  "env": {
+    "node": true,
+    "es2022": true,
+    "jest": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:node/recommended",
+    "plugin:jest/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2022,
+    "sourceType": "module",
+    "requireConfigFile": false
+  },
+  "plugins": [
+    "node",
+    "jest",
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "lf"
+      }
+    ],
+    
+    // Node.js specific rules
+    "node/exports-style": [
+      "error",
+      "module.exports"
+    ],
+    "node/file-extension-in-import": [
+      "error",
+      "always"
+    ],
+    "node/prefer-global/buffer": [
+      "error",
+      "always"
+    ],
+    "node/prefer-global/console": [
+      "error",
+      "always"
+    ],
+    "node/prefer-global/process": [
+      "error",
+      "always"
+    ],
+    "node/prefer-promises/dns": "error",
+    "node/prefer-promises/fs": "error",
+    "node/prefer-global/url": [
+      "error",
+      "always"
+    ],
+    "node/prefer-global/util": [
+      "error",
+      "always"
+    ],
+    "node/prefer-timers": "error",
+    "node/no-unpublished-import": "off",
+    "node/no-unpublished-require": "off",
+    "node/no-unsupported-features/es-syntax": "off",
+    "node/no-unsupported-features/es-builtins": "off",
+    
+    // Jest specific rules
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
+    "jest/valid-expect-in-promise": "error",
+    "jest/no-conditional-expect": "error",
+    "jest/no-conditional-in-test": "warn",
+    "jest/no-deprecated-functions": "error",
+    "jest/no-done-callback": "error",
+    "jest/no-duplicate-hooks": "error",
+    "jest/no-export": "error",
+    "jest/no-hooks": "off",
+    "jest/no-interpolation-in-snapshots": "error",
+    "jest/no-large-snapshots": "warn",
+    "jest/no-mocks-import": "error",
+    "jest/no-test-return-statement": "error",
+    "jest/no-test-prefixes": "error",
+    "jest/prefer-called-with": "error",
+    "jest/prefer-comparison-matcher": "warn",
+    "jest/prefer-equality-matcher": "warn",
+    "jest/prefer-expect-assertions": "warn",
+    "jest/prefer-expect-resolves": "warn",
+    "jest/prefer-hooks-in-order": "warn",
+    "jest/prefer-hooks-on-top": "error",
+    "jest/prefer-lowercase-title": [
+      "error",
+      {
+        "ignoreTopLevelDescribe": false,
+        "ignoredPrefixes": []
+      }
+    ],
+    "jest/prefer-spy-on": "error",
+    "jest/prefer-strict-equal": "error",
+    "jest/prefer-to-be": "warn",
+    "jest/prefer-to-contain": "warn",
+    "jest/prefer-to-equal": "warn",
+    "jest/prefer-to-match-object": "warn",
+    "jest/prefer-to-throw": "warn",
+    "jest/prefer-todo": "warn",
+    "jest/require-hook": "off",
+    "jest/require-top-level-describe": "error",
+    "jest/unbound-method": "error",
+    
+    // General JavaScript rules
+    "no-console": "warn",
+    "no-debugger": "error",
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-arrow-callback": "error",
+    "arrow-spacing": "error",
+    "object-shorthand": "error",
+    "prefer-template": "error",
+    "template-curly-spacing": "error",
+    "no-useless-concat": "error",
+    "no-useless-escape": "error",
+    "no-const-assign": "error",
+    "no-dupe-keys": "error",
+    "no-duplicate-case": "error",
+    "no-empty": "error",
+    "no-ex-assign": "error",
+    "no-extra-boolean-cast": "error",
+    "no-extra-semi": "error",
+    "no-fallthrough": "error",
+    "no-func-assign": "error",
+    "no-global-assign": "error",
+    "no-inner-declarations": "error",
+    "no-invalid-regexp": "error",
+    "no-irregular-whitespace": "error",
+    "no-iterator": "error",
+    "no-labels": "error",
+    "no-lone-blocks": "error",
+    "no-loop-func": "error",
+    "no-mixed-spaces-and-tabs": "error",
+    "no-multi-str": "error",
+    "no-new": "error",
+    "no-new-func": "error",
+    "no-new-wrappers": "error",
+    "no-octal": "error",
+    "no-octal-escape": "error",
+    "no-proto": "error",
+    "no-redeclare": "error",
+    "no-return-assign": "error",
+    "no-script-url": "error",
+    "no-self-assign": "error",
+    "no-self-compare": "error",
+    "no-sequences": "error",
+    "no-shadow-restricted-names": "error",
+    "no-sparse-arrays": "error",
+    "no-this-before-super": "error",
+    "no-throw-literal": "error",
+    "no-unexpected-multiline": "error",
+    "no-unreachable": "error",
+    "no-unsafe-finally": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "none",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-useless-call": "error",
+    "no-useless-computed-key": "error",
+    "no-useless-constructor": "error",
+    "no-useless-rename": "error",
+    "no-with": "error",
+    "no-whitespace-before-property": "error",
+    "operator-linebreak": [
+      "error",
+      "after"
+    ],
+    "padded-blocks": [
+      "error",
+      "never"
+    ],
+    "quote-props": [
+      "error",
+      "as-needed"
+    ],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "semi-spacing": "error",
+    "space-before-blocks": "error",
+    "space-before-function-paren": [
+      "error",
+      "never"
+    ],
+    "space-in-parens": [
+      "error",
+      "never"
+    ],
+    "space-infix-ops": "error",
+    "space-unary-ops": "error",
+    "spaced-comment": [
+      "error",
+      "always"
+    ],
+    "template-curly-spacing": "error",
+    "template-tag-spacing": "error",
+    "unicode-bom": [
+      "error",
+      "never"
+    ],
+    "use-isnan": "error",
+    "valid-typeof": "error",
+    "wrap-iife": [
+      "error",
+      "inside"
+    ],
+    "yield-star-spacing": "error",
+    "yoda": [
+      "error",
+      "never"
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "test-*.js",
+        "**/test/**/*.js",
+        "**/__tests__/**/*.js"
+      ],
+      "env": {
+        "jest/globals": true
+      },
+      "rules": {
+        "no-console": "off",
+        "node/no-unpublished-require": "off",
+        "node/no-unpublished-import": "off"
+      }
+    },
+    {
+      "files": [
+        "*.config.js",
+        "*.config.cjs"
+      ],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "node/no-unpublished-require": "off",
+        "node/no-unpublished-import": "off"
+      }
+    },
+    {
+      "files": [
+        "bin/**/*.js"
+      ],
+      "rules": {
+        "no-console": "off",
+        "node/shebang": [
+          "error",
+          {
+            "convertPath": {
+              "src/": "dist/",
+              "test/": "dist/test/"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "settings": {
+    "node": {
+      "tryExtensions": [
+        ".js",
+        ".json",
+        ".node",
+        ".mjs"
+      ]
+    }
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "dist/",
+    "build/",
+    "coverage/",
+    ".cache/",
+    "*.min.js",
+    "*.bundle.js",
+    "jest.config.js",
+    "babel.config.js"
+  ]
+}

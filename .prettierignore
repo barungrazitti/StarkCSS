@@ -1,0 +1,553 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+*.min.js
+*.bundle.js
+*.chunk.js
+
+# Cache directories
+.cache/
+.temp/
+.tmp/
+*.cache
+*.tmp
+
+# Test coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# Subversion files
+.svn/
+.svnignore
+
+# Mercurial files
+.hg/
+.hgignore
+
+# Bazaar files
+.bzr/
+.bzrignore
+
+# Large binary files
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+*.ico
+*.bmp
+*.tiff
+*.tif
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.bz2
+*.xz
+*.z
+*.war
+*.ear
+*.jar
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.lib
+*.o
+*.obj
+*.bin
+*.dat
+*.db
+*.sqlite
+*.sqlite3
+*.mdb
+*.accdb
+*.pdb
+*.idb
+*.ldb
+*.mdf
+*.ndf
+*.ldf
+*.bak
+*.backup
+*.tmp
+*.temp
+*.cache
+*.log
+*.old
+*.orig
+*.rej
+*.patch
+*.diff
+*.dmp
+*.crash
+*.stackdump
+*.stacktrace
+*.core
+*.dmp
+*.mdmp
+*.hdmp
+*.wer
+*.evt
+*.evtx
+*.etl
+*.jrs
+*.jtl
+*.trs
+*.xml
+*.html
+*.htm
+*.xhtml
+*.xht
+*.mht
+*.mhtml
+*.svg
+*.svgz
+*.eot
+*.ttf
+*.woff
+*.woff2
+*.otf
+*.mp3
+*.mp4
+*.avi
+*.mov
+*.wmv
+*.flv
+*.webm
+*.mkv
+*.m4v
+*.3gp
+*.wav
+*.flac
+*.ogg
+*.aac
+*.m4a
+*.wma
+*.ra
+*.rm
+*.ram
+*.rmvb
+*.asf
+*.divx
+*.xvid
+*.f4v
+*.f4p
+*.f4a
+*.f4b
+
+# Minified files
+*.min.css
+*.min.js
+*.min.map
+
+# Source maps
+*.map
+*.js.map
+*.css.map
+
+# Backup files
+*.backup
+*.bak
+*.old
+*.orig
+*.rej
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# TypeScript declaration files (if not in source)
+*.d.ts
+
+# Generated files
+generated/
+gen/
+out/
+dist/
+build/
+
+# Test fixtures
+test/fixtures/
+test/__fixtures__/
+test/__snapshots__/
+**/*.snap
+**/*.snap.md
+
+# Storybook build
+storybook-static/
+
+# Angular build
+.angular/
+
+# React Native build
+ios/build/
+android/build/
+android/app/build/
+android/.gradle/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/.idea/
+android/*.iml
+android/.gradle/
+android/app/build/
+android/app/build/outputs/
+android/app/release/
+
+# Flutter build
+build/
+flutter/build/
+flutter/.flutter-plugins
+flutter/.flutter-plugins-dependencies
+flutter/.packages
+flutter/.dart_tool/
+flutter/build/
+flutter/ios/
+flutter/android/
+flutter/web/
+
+# Expo build
+expo-build/
+web-build/
+dist/
+
+# Next.js build
+.next/
+out/
+
+# Nuxt.js build
+.nuxt/
+dist/
+
+# Gatsby build
+public/
+.cache/
+
+# Hugo build
+public/
+resources/_gen/
+
+# Jekyll build
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Hexo build
+public/
+db.json
+debug.log
+node_modules/
+
+# Metalsmith build
+build/
+metalsmith-build/
+
+# Eleventy build
+_site/
+_eleventy_temp/
+.eleventyignore
+
+# Pelican build
+output/
+pelicancache/
+
+# Sphinx build
+_build/
+.cache/
+
+# MkDocs build
+site/
+mkdocs.yml
+
+# Docusaurus build
+build/
+.docusaurus/
+
+# VuePress build
+docs/.vuepress/dist/
+
+# Gridsome build
+dist/
+.cache/
+
+# SvelteKit build
+build/
+.svelte-kit/
+
+# SolidJS build
+dist/
+solid-dist/
+
+# Qwik build
+dist/
+.qwik/
+
+# Astro build
+dist/
+.astro/
+
+# Remix build
+build/
+public/build/
+
+# RedwoodJS build
+api/dist/
+web/dist/
+
+# Blitz.js build
+.blitz/
+build/
+
+# AdonisJS build
+build/
+
+# Fastify build
+dist/
+
+# Hapi build
+dist/
+
+# Koa build
+dist/
+
+# Express build
+dist/
+
+# NestJS build
+dist/
+
+# Strapi build
+build/
+.cache/
+
+# Directus build
+build/
+dist/
+
+# Payload CMS build
+build/
+dist/
+
+# Keystone CMS build
+.keystone/
+build/
+
+# Sanity Studio build
+dist/
+
+# Prisma build
+prisma/migrations/
+
+# TypeORM build
+dist/
+
+# Sequelize build
+dist/
+
+# Mongoose build
+dist/
+
+# GraphQL build
+dist/
+
+# Apollo Client build
+dist/
+
+# Relay build
+dist/
+
+# React Query build
+dist/
+
+# SWR build
+dist/
+
+# Zustand build
+dist/
+
+# Redux build
+dist/
+
+# MobX build
+dist/
+
+# RxJS build
+dist/
+
+# Lodash build
+dist/
+
+# Underscore build
+dist/
+
+# Moment.js build
+dist/
+
+# Day.js build
+dist/
+
+# Date-fns build
+dist/
+
+# Luxon build
+dist/
+
+# Chalk build
+dist/
+
+# Inquirer build
+dist/
+
+# Commander build
+dist/
+
+# Yargs build
+dist/
+
+# Minimist build
+dist/
+
+# Optimist build
+dist/
+
+# Meow build
+dist/
+
+# CAC build
+dist/
+
+# Caporal build
+dist/
+
+# Vorpal build
+dist/
+
+# Oclif build
+dist/
+
+# Gluegun build
+dist/
+
+# Sade build
+dist/
+
+// Minified and compiled files
+*.min.js
+*.min.css
+*.min.map
+*.bundle.js
+*.chunk.js
+*.worker.js
+*.service-worker.js
